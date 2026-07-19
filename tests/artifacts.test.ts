@@ -4,6 +4,7 @@ import * as os from 'node:os';
 import * as path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { assembleArtifacts } from '../src/artifacts.js';
+import { CouncilError } from '../src/errors.js';
 
 let dir: string;
 
@@ -193,7 +194,13 @@ describe('assembleArtifacts - git diff', () => {
   });
 
   it('throws NOT_A_REPO outside a git repository', () => {
-    expect(() => assembleArtifacts({ diff: {}, cwd: dir })).toThrowError(/NOT_A_REPO/);
+    try {
+      assembleArtifacts({ diff: {}, cwd: dir });
+      expect.fail('expected assembleArtifacts to throw');
+    } catch (err) {
+      expect(err).toBeInstanceOf(CouncilError);
+      expect((err as CouncilError).code).toBe('NOT_A_REPO');
+    }
   });
 });
 

@@ -194,7 +194,7 @@ function gitDiffBlock(spec: { range?: string; paths?: string[] }, cwd: string): 
     // Covers both "not a git repository" (exit 128) and a missing git binary
     // (ENOENT) - both surface as the same user-facing error.
     throw new CouncilError(
-      `NOT_A_REPO: --diff requires a git repository and the git binary (cwd: ${cwd})`,
+      `--diff requires a git repository and the git binary (cwd: ${cwd})`,
       'NOT_A_REPO'
     );
   }
