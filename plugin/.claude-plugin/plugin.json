@@ -1,6 +1,6 @@
 {
   "name": "council-axi",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Multi-LLM adversarial review council via council-axi CLI",
   "author": {
     "name": "lanjak"

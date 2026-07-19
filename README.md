@@ -136,6 +136,14 @@ Pressure-test a plan:
 $ council-axi plan "Should we migrate auth to a separate service?"
 ```
 
+Attach files, a directory, or a diff:
+
+```sh
+$ council-axi review "is this sound?" --file plan.md --file src/
+$ council-axi review "what did I break?" --diff
+$ git diff | council-axi review "check this" --stdin
+```
+
 Example output:
 
 ```
@@ -159,6 +167,23 @@ synthesis:
 help[1]: Run `npx -y council-axi review "<prompt>" --models openai,groq`
 ```
 
+## Attaching artifacts
+
+```sh
+council-axi review "is this sound?" --file plan.md --file src/
+council-axi review "what did I break?" --diff            # git diff HEAD
+council-axi review "review this range" --diff HEAD~3
+git diff | council-axi review "check this" --stdin
+```
+
+Files and directories are embedded in the prompt with path labels (remote
+judges have no filesystem access). Directories respect `.gitignore`;
+`node_modules`/`.git` are always skipped; binary files are skipped with a
+warning. The combined artifact budget defaults to 400 KB - explicit `--file`
+inputs first, then the diff, then directory expansions; anything past the cap
+is truncated or omitted and named in the output's `warnings` section. Override
+with `COUNCIL_MAX_ARTIFACT_BYTES`.
+
 ## Exit codes
 
 - `0` - at least one judge responded
@@ -173,7 +198,47 @@ help[1]: Run `npx -y council-axi review "<prompt>" --models openai,groq`
 npx -y council-axi review "..." --models openai,groq
 ```
 
-Session hooks are planned but not implemented yet.
+## Harness hooks
+
+`council-axi hook <event>` is a portable lifecycle entrypoint any agent
+harness can call. It reads the harness's JSON payload from stdin (or
+`--payload '<json>'`), best-effort, and never hard-fails on unknown shapes.
+
+- `council-axi hook session-start` - prints available providers and usage as
+  context. Always exits 0.
+- `council-axi hook post-edit` - records edited file paths for the session.
+  Always exits 0. Harnesses must wait for this command's exit before firing
+  `stop`.
+- `council-axi hook stop` - review gate. If edits are pending, the council
+  reviews `git diff HEAD` for those paths. Majority-fail verdict blocks with
+  exit 2 and the synthesis on stdout. Anything else exits 0; provider outages
+  fail open (edits kept for manual re-review).
+
+Claude Code / openclaude wiring (`~/.claude/settings.json`):
+
+```json
+{
+  "hooks": {
+    "SessionStart": [
+      { "hooks": [{ "type": "command", "command": "council-axi hook session-start" }] }
+    ],
+    "PostToolUse": [
+      { "matcher": "Edit|Write|MultiEdit",
+        "hooks": [{ "type": "command", "command": "council-axi hook post-edit" }] }
+    ],
+    "Stop": [
+      { "hooks": [{ "type": "command", "command": "council-axi hook stop" }] }
+    ]
+  }
+}
+```
+
+Other harnesses (pi, opencode, codex, Gemini CLI, goose): point their
+session-start / after-edit / stop lifecycle events at the same three commands.
+What a harness does with hook stdout and exit codes varies - consult its docs.
+Payload formats are parsed best-effort; if your harness's shape is not
+recognized, the hooks degrade gracefully (session tracking falls back to a
+cwd-based key with a stderr warning).
 
 ## Development
 
