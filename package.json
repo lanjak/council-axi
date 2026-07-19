@@ -1,8 +1,9 @@
 {
   "name": "council-axi",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Multi-LLM adversarial review council - an AXI",
   "type": "module",
+  "main": "./dist/cli.js",
   "bin": {
     "council-axi": "dist/cli.js"
   },

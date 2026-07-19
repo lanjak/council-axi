@@ -5,14 +5,14 @@
   },
   "metadata": {
     "description": "Multi-LLM adversarial review council via the council-axi CLI",
-    "version": "0.2.0"
+    "version": "0.2.1"
   },
   "plugins": [
     {
       "name": "council-axi",
       "source": "./plugin",
       "description": "Run a multi-LLM adversarial review council via the council-axi CLI",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "author": {
         "name": "lanjak"
       },
