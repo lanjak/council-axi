@@ -4,6 +4,7 @@ import { reviewCommand } from './commands/review.js';
 import { planCommand } from './commands/plan.js';
 import { setupCommand } from './commands/setup.js';
 import { homeCommand } from './commands/home.js';
+import { hookCommand } from './commands/hook.js';
 import { formatError } from './errors.js';
 
 program
@@ -32,6 +33,12 @@ program
   .description('Pressure-test a plan or decision')
   .option('-m, --models <models>', 'Comma-separated provider list')
   .action(planCommand);
+
+program
+  .command('hook [event]')
+  .description('Harness lifecycle hook entrypoint (session-start|post-edit|stop)')
+  .option('--payload <json>', 'hook payload as JSON (alternative to stdin)')
+  .action(hookCommand);
 
 async function main(): Promise<void> {
   if (process.argv.length <= 2) {
