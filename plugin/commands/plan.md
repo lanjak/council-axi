@@ -5,13 +5,13 @@ disable-model-invocation: true
 allowed-tools: Bash(node:*)
 ---
 
-Pressure-test a plan through the axi-council CLI.
+Pressure-test a plan through the council-axi CLI.
 
 Raw arguments: `$ARGUMENTS`
 
 Run:
 ```bash
-node /home/rufi/projects/axi-council/dist/cli.js plan "$ARGUMENTS"
+node /home/rufi/projects/council-axi/dist/cli.js plan "$ARGUMENTS"
 ```
 
 Return stdout verbatim.

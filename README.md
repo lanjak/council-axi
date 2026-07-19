@@ -1,23 +1,23 @@
-<h1 align="center">axi-council</h1>
+<h1 align="center">council-axi</h1>
 
 <p align="center">Multi-LLM adversarial review council - an <a href="https://github.com/kunchenguid/axi">AXI</a>.</p>
 
 ---
 
-`axi-council` sends a single prompt to several independent LLM judges and returns a synthesized review. It is useful when you want more than one model to look at a plan, decision, or code change before you act. Output is in [TOON](https://toonformat.dev/) so agents can read it cheaply.
+`council-axi` sends a single prompt to several independent LLM judges and returns a synthesized review. It is useful when you want more than one model to look at a plan, decision, or code change before you act. Output is in [TOON](https://toonformat.dev/) so agents can read it cheaply.
 
 It is provider-agnostic. If a provider speaks the OpenAI chat completions API, you can add it to your council by setting a few environment variables.
 
 ## Install
 
 ```sh
-npm install -g axi-council
+npm install -g council-axi
 ```
 
 Or run without installing:
 
 ```sh
-npx -y axi-council <command>
+npx -y council-axi <command>
 ```
 
 ## Configure providers
@@ -109,7 +109,7 @@ LOCAL_MODEL=local-model
 Check which providers are authenticated:
 
 ```sh
-$ axi-council setup
+$ council-axi setup
 providers[2]{name,authenticated,detail}:
   openai,true,OpenAI API key is set
   groq,true,Groq API key is set
@@ -121,19 +121,19 @@ help[2]:
 Run an adversarial review:
 
 ```sh
-$ axi-council review "Should we add a caching layer here?"
+$ council-axi review "Should we add a caching layer here?"
 ```
 
 Or pick a subset:
 
 ```sh
-$ axi-council review "Should we add a caching layer here?" --models openai,groq
+$ council-axi review "Should we add a caching layer here?" --models openai,groq
 ```
 
 Pressure-test a plan:
 
 ```sh
-$ axi-council plan "Should we migrate auth to a separate service?"
+$ council-axi plan "Should we migrate auth to a separate service?"
 ```
 
 Example output:
@@ -156,7 +156,7 @@ synthesis:
   **Key points:**
   - Ship after adding cache invalidation
   - Ship but measure hit ratio first
-help[1]: Run `npx -y axi-council review "<prompt>" --models openai,groq`
+help[1]: Run `npx -y council-axi review "<prompt>" --models openai,groq`
 ```
 
 ## Exit codes
@@ -167,10 +167,10 @@ help[1]: Run `npx -y axi-council review "<prompt>" --models openai,groq`
 
 ## Agent integration
 
-`axi-council` ships with an installable Agent Skill in `skills/axi-council/SKILL.md`. Copy it into your agent's skill directory, or point your agent at the CLI directly:
+`council-axi` ships with an installable Agent Skill in `skills/council-axi/SKILL.md`. Copy it into your agent's skill directory, or point your agent at the CLI directly:
 
 ```sh
-npx -y axi-council review "..." --models openai,groq
+npx -y council-axi review "..." --models openai,groq
 ```
 
 Session hooks are planned but not implemented yet.

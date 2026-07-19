@@ -6,7 +6,7 @@ export async function homeCommand(): Promise<void> {
   const providers = listProviders(config);
   const lines: string[] = [];
 
-  lines.push('axi-council: multi-LLM adversarial review council');
+  lines.push('council-axi: multi-LLM adversarial review council');
   lines.push(`providers[${providers.length}]{name,authenticated}:`);
   for (const name of providers) {
     const providerConfig = config.providers[name];
@@ -26,7 +26,7 @@ export async function homeCommand(): Promise<void> {
 
   lines.push('help[2]:');
   lines.push('  Set COUNCIL_PROVIDERS and per-provider env vars');
-  lines.push('  Run `axi-council review "<prompt>" --models <provider1>,<provider2>`');
+  lines.push('  Run `council-axi review "<prompt>" --models <provider1>,<provider2>`');
 
   console.log(lines.join('\n'));
 }

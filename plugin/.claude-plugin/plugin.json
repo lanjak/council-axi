@@ -1,5 +1,5 @@
 {
-  "name": "axi-council",
+  "name": "council-axi",
   "version": "0.1.0",
-  "description": "Multi-LLM adversarial review council via axi-council CLI"
+  "description": "Multi-LLM adversarial review council via council-axi CLI"
 }

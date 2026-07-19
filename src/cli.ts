@@ -7,8 +7,8 @@ import { homeCommand } from './commands/home.js';
 import { formatError } from './errors.js';
 
 program
-  .name('axi-council')
-  .description('AXI-compliant multi-LLM adversarial review council')
+  .name('council-axi')
+  .description('Multi-LLM adversarial review council - an AXI')
   .version('0.1.0')
   .exitOverride()
   .configureOutput({
@@ -46,7 +46,7 @@ main().catch((err) => {
     if (err.code === 'commander.helpDisplayed' || err.code === 'commander.version') {
       process.exit(0);
     }
-    console.log(`${err.message.trim()}\nhelp: npx -y axi-council --help`);
+    console.log(`${err.message.trim()}\nhelp: npx -y council-axi --help`);
     process.exit(2);
   }
   console.log(formatError(err));

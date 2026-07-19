@@ -5,13 +5,13 @@ disable-model-invocation: true
 allowed-tools: Bash(node:*)
 ---
 
-Run an adversarial review through the axi-council CLI.
+Run an adversarial review through the council-axi CLI.
 
 Raw arguments: `$ARGUMENTS`
 
 Run:
 ```bash
-node /home/rufi/projects/axi-council/dist/cli.js review "$ARGUMENTS"
+node /home/rufi/projects/council-axi/dist/cli.js review "$ARGUMENTS"
 ```
 
 Return stdout verbatim.

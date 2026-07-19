@@ -1,6 +1,6 @@
 ---
-name: axi-council
-description: Run a multi-LLM adversarial review council via the axi-council CLI
+name: council-axi
+description: Run a multi-LLM adversarial review council via the council-axi CLI
 metadata:
   type: tool
   user-invocable: false
@@ -23,12 +23,12 @@ Use this skill when the user wants adversarial feedback on a plan, decision, des
    - Any OpenAI-compatible provider works the same way.
 2. Run the CLI:
    ```bash
-   npx -y axi-council review "<prompt or artifact summary>" --models openai,groq
+   npx -y council-axi review "<prompt or artifact summary>" --models openai,groq
    ```
 3. Return stdout verbatim to the user.
 
 ## Commands
 
-- `npx -y axi-council setup` - check authentication
-- `npx -y axi-council review "..."` - adversarial review
-- `npx -y axi-council plan "..."` - pressure-test a plan
+- `npx -y council-axi setup` - check authentication
+- `npx -y council-axi review "..."` - adversarial review
+- `npx -y council-axi plan "..."` - pressure-test a plan

@@ -29,14 +29,14 @@ export function renderTOON(output: CouncilOutput): string {
 
   const help: string[] = [];
   if (skipped.length > 0) {
-    help.push('Run `npx -y axi-council setup` to check provider authentication');
+    help.push('Run `npx -y council-axi setup` to check provider authentication');
     const responding = output.judges.filter((j) => j.status === 'success').map((j) => j.provider);
     if (responding.length > 0) {
-      help.push(`Run \`npx -y axi-council ${output.mode} "<prompt>" --models ${responding.join(',')}\` to use only responding judges`);
+      help.push(`Run \`npx -y council-axi ${output.mode} "<prompt>" --models ${responding.join(',')}\` to use only responding judges`);
     }
   } else {
     const providers = output.judges.map((j) => j.provider).join(',');
-    help.push(`Run \`npx -y axi-council ${output.mode} "<prompt>" --models ${providers}\``);
+    help.push(`Run \`npx -y council-axi ${output.mode} "<prompt>" --models ${providers}\``);
   }
   lines.push(`help[${help.length}]:`);
   for (const h of help) {
