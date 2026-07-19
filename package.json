@@ -4,13 +4,13 @@
   "description": "Multi-LLM adversarial review council - an AXI",
   "type": "module",
   "bin": {
-    "council-axi": "./dist/cli.js"
+    "council-axi": "dist/cli.js"
   },
   "engines": {
     "node": ">=20"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && chmod +x dist/cli.js",
     "dev": "tsx src/cli.ts",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -30,6 +30,12 @@
     "dist",
     "skills"
   ],
-  "keywords": ["axi", "llm", "council", "adversarial-review", "claude-code"],
+  "keywords": [
+    "axi",
+    "llm",
+    "council",
+    "adversarial-review",
+    "claude-code"
+  ],
   "license": "MIT"
 }
