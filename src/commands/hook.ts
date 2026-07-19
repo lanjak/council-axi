@@ -6,6 +6,7 @@ import { synthesize } from '../chairman.js';
 import { runCouncil } from '../council.js';
 import { assembleArtifacts, formatArtifactPreamble } from '../artifacts.js';
 import { decideGate } from '../hooks/gate.js';
+import { parseCapBytesOverride } from './review.js';
 
 const GATE_SYSTEM_PROMPT = `You are one judge on a review council gating completion of a coding task. Review the diff of uncommitted changes. Be adversarial: look for bugs, security issues, broken contracts, missing tests. End your response with a final line of exactly one of:
 VERDICT: pass
@@ -48,7 +49,7 @@ async function sessionStart(_rawPayload: string): Promise<void> {
       return; // nothing configured: stay silent, exit 0
     }
     console.log(`council[available]: providers ${providers.join(',')} | review gate active`);
-    console.log('help: run `council-axi review --diff "<question>"` for a council review');
+    console.log('help: run `council-axi review "<question>" --diff` for a council review');
   } catch {
     // A context hook must never break session startup.
   }
@@ -102,7 +103,24 @@ async function stop(rawPayload: string): Promise<void> {
       return;
     }
 
-    const bundle = assembleArtifacts({ diff: { paths: edits }, cwd: payload.cwd ?? process.cwd() });
+    const bundle = assembleArtifacts({
+      diff: { paths: edits },
+      cwd: payload.cwd ?? process.cwd(),
+      capBytes: parseCapBytesOverride(),
+    });
+
+    if (bundle.blocks.length === 0) {
+      // Edits were pending but produced no diff content (e.g. already
+      // committed) - there is nothing to review, so treat this the same as
+      // the no-pending-edits case, but the pending edits WERE reviewed (as
+      // "nothing to flag"), so clear the state instead of leaving it stale.
+      process.exitCode = 0;
+      safelyClearSession(key);
+      return;
+    }
+
+    const warningsSuffix = bundle.warnings.length > 0 ? ` (warnings: ${bundle.warnings.length})` : '';
+
     const prompt =
       formatArtifactPreamble(bundle) +
       `Review the above uncommitted changes to these files: ${edits.join(', ')}`;
@@ -117,7 +135,9 @@ async function stop(rawPayload: string): Promise<void> {
     const decision = decideGate(judges);
 
     if (decision.outcome === 'fail-open') {
-      console.log(`council[gate_error]: ${decision.reason} - gate failed open, edits kept for re-review`);
+      console.log(
+        `council[gate_error]: ${decision.reason} - gate failed open, edits kept for re-review${warningsSuffix}`
+      );
       process.exitCode = 0;
       return; // state NOT cleared
     }
@@ -129,13 +149,13 @@ async function stop(rawPayload: string): Promise<void> {
 
     if (decision.outcome === 'block') {
       console.log(synthesis);
-      console.error(`council-axi gate: blocked - ${decision.reason}`);
+      console.error(`council-axi gate: blocked - ${decision.reason}${warningsSuffix}`);
       process.exitCode = 2;
       safelyClearSession(key);
       return;
     }
 
-    console.log(`council[gate]: pass - ${decision.reason}`);
+    console.log(`council[gate]: pass - ${decision.reason}${warningsSuffix}`);
     process.exitCode = 0;
     safelyClearSession(key);
   } catch (err) {

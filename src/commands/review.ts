@@ -41,7 +41,7 @@ export async function reviewCommand(
   console.log(renderTOON(output));
 }
 
-function parseCapBytesOverride(): number | undefined {
+export function parseCapBytesOverride(): number | undefined {
   const raw = process.env.COUNCIL_MAX_ARTIFACT_BYTES;
   if (!raw) return undefined;
   const n = Number.parseInt(raw, 10);

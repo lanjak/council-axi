@@ -5,6 +5,7 @@ import * as path from 'node:path';
 import { hookCommand } from '../../src/commands/hook.js';
 import { runCouncil } from '../../src/council.js';
 import { clearSession } from '../../src/hooks/state.js';
+import { assembleArtifacts } from '../../src/artifacts.js';
 
 vi.mock('../../src/council.js', () => ({
   runCouncil: vi.fn(),
@@ -232,6 +233,18 @@ describe('hookCommand stop gate', () => {
     expect(process.exitCode).toBe(0);
     expect(logSpy.mock.calls.flat().join('\n')).toContain('gate_error');
     expect(fs.existsSync(path.join(dir, 'council-axi', 'claude-code-g1.jsonl'))).toBe(true);
+  });
+
+  it('exits 0 and clears state when edits are pending but the diff is empty, without calling runCouncil', async () => {
+    seedEdits('claude-code-g1', ['/proj/a.ts']);
+    vi.mocked(assembleArtifacts).mockReturnValueOnce({ blocks: [], totalBytes: 0, warnings: [] });
+
+    await hookCommand('stop', { payload });
+
+    expect(process.exitCode).toBe(0);
+    expect(runCouncil).not.toHaveBeenCalled();
+    expect(clearSession).toHaveBeenCalled();
+    expect(fs.existsSync(path.join(dir, 'council-axi', 'claude-code-g1.jsonl'))).toBe(false);
   });
 
   it('fails open on an internal error and keeps state', async () => {

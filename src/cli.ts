@@ -10,7 +10,7 @@ import { formatError } from './errors.js';
 program
   .name('council-axi')
   .description('Multi-LLM adversarial review council - an AXI')
-  .version('0.1.0')
+  .version('0.2.0')
   .exitOverride()
   .configureOutput({
     writeOut: (str: string) => process.stdout.write(str),

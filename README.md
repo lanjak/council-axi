@@ -177,8 +177,10 @@ git diff | council-axi review "check this" --stdin
 ```
 
 Files and directories are embedded in the prompt with path labels (remote
-judges have no filesystem access). Directories respect `.gitignore`;
-`node_modules`/`.git` are always skipped; binary files are skipped with a
+judges have no filesystem access). Directories respect `.gitignore` files at
+or below the attached path (a repo-root `.gitignore` above the attached
+directory is not consulted); `node_modules`/`.git` are always skipped; binary
+files are skipped with a
 warning. The combined artifact budget defaults to 400 KB - explicit `--file`
 inputs first, then the diff, then directory expansions; anything past the cap
 is truncated or omitted and named in the output's `warnings` section. Override
