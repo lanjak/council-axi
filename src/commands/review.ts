@@ -41,6 +41,13 @@ export async function reviewCommand(
   console.log(renderTOON(output));
 }
 
+function parseCapBytesOverride(): number | undefined {
+  const raw = process.env.COUNCIL_MAX_ARTIFACT_BYTES;
+  if (!raw) return undefined;
+  const n = Number.parseInt(raw, 10);
+  return Number.isInteger(n) && n > 0 ? n : undefined;
+}
+
 export async function buildPrompt(
   prompt: string,
   options: ArtifactOptions
@@ -56,6 +63,7 @@ export async function buildPrompt(
     files: options.file,
     diff: options.diff === undefined ? undefined : { range: typeof options.diff === 'string' ? options.diff : undefined },
     stdin: options.stdin ? await readStdinPayload() : undefined,
+    capBytes: parseCapBytesOverride(),
   });
 
   const text = bundle.blocks.length > 0
