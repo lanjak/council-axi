@@ -22,6 +22,13 @@ export function renderTOON(output: CouncilOutput): string {
     }
   }
 
+  if (output.warnings && output.warnings.length > 0) {
+    lines.push(`warnings[${output.warnings.length}]:`);
+    for (const w of output.warnings) {
+      lines.push(`  ${w}`);
+    }
+  }
+
   lines.push('synthesis:');
   for (const line of output.synthesis.split('\n')) {
     lines.push(`  ${line}`);

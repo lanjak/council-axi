@@ -32,4 +32,10 @@ describe('output', () => {
     expect(header).toContain('(5000 chars total)');
     expect(toon).not.toContain('x'.repeat(1000));
   });
+
+  it('renders warnings when present', () => {
+    const toon = renderTOON({ ...sample, warnings: ['not found: x.md', 'omitted (cap): y.md'] });
+    expect(toon).toContain('warnings[2]:');
+    expect(toon).toContain('not found: x.md');
+  });
 });

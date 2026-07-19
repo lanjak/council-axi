@@ -22,6 +22,7 @@ export interface CouncilOutput {
   synthesis: string;
   availableCount: number;
   totalCount: number;
+  warnings?: string[];
 }
 
 export interface ProviderConfig {

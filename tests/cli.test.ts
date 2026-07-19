@@ -21,4 +21,38 @@ describe('reviewCommand', () => {
     expect(output).toContain('Ship it.');
     logSpy.mockRestore();
   });
+
+  it('attaches file artifacts to the prompt', async () => {
+    const fs = await import('node:fs');
+    const os = await import('node:os');
+    const path = await import('node:path');
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'council-cli-'));
+    fs.writeFileSync(path.join(dir, 'plan.md'), 'PLAN CONTENT');
+    const cwd = process.cwd();
+    process.chdir(dir);
+
+    const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+    vi.mocked(runCouncil).mockResolvedValue([
+      { provider: 'openai', model: 'gpt-4o', status: 'success', response: 'ok' },
+    ]);
+
+    try {
+      await reviewCommand('question?', { models: 'openai', file: ['plan.md'] });
+      const prompt = vi.mocked(runCouncil).mock.calls.at(-1)![1].prompt;
+      expect(prompt).toContain('## Artifacts');
+      expect(prompt).toContain('PLAN CONTENT');
+      expect(prompt).toContain('question?');
+    } finally {
+      process.chdir(cwd);
+      fs.rmSync(dir, { recursive: true, force: true });
+      logSpy.mockRestore();
+    }
+  });
+
+  it('errors clearly when --stdin is given with a terminal stdin', async () => {
+    const original = process.stdin.isTTY;
+    Object.defineProperty(process.stdin, 'isTTY', { value: true, configurable: true });
+    await expect(reviewCommand('q', { models: 'openai', stdin: true })).rejects.toThrow(/terminal/);
+    Object.defineProperty(process.stdin, 'isTTY', { value: original, configurable: true });
+  });
 });

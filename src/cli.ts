@@ -22,16 +22,26 @@ program
   .description('Check provider authentication status')
   .action(setupCommand);
 
+function collect(value: string, previous: string[]): string[] {
+  return previous.concat([value]);
+}
+
 program
   .command('review <prompt>')
   .description('Run an adversarial review of an artifact or question')
   .option('-m, --models <models>', 'Comma-separated provider list')
+  .option('-f, --file <path>', 'Attach a file or directory (repeatable)', collect, [])
+  .option('--diff [range]', 'Attach git diff (default: HEAD)')
+  .option('--stdin', 'Attach artifact content from stdin')
   .action(reviewCommand);
 
 program
   .command('plan <prompt>')
   .description('Pressure-test a plan or decision')
   .option('-m, --models <models>', 'Comma-separated provider list')
+  .option('-f, --file <path>', 'Attach a file or directory (repeatable)', collect, [])
+  .option('--diff [range]', 'Attach git diff (default: HEAD)')
+  .option('--stdin', 'Attach artifact content from stdin')
   .action(planCommand);
 
 program
