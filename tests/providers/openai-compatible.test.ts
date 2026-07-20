@@ -59,3 +59,31 @@ describe('OpenAICompatibleProvider', () => {
     await expect(provider.chat({ prompt: 'hi', model: 'test-model' })).rejects.toThrow('rate limit');
   });
 });
+
+describe('temperature handling', () => {
+  const mockCreate = (provider: OpenAICompatibleProvider) =>
+    vi.spyOn(provider['client'].chat.completions, 'create').mockResolvedValue({
+      choices: [{ message: { content: 'ok' } }],
+    } as any);
+
+  it('omits temperature entirely when nothing is configured', async () => {
+    const provider = new OpenAICompatibleProvider(config);
+    const create = mockCreate(provider);
+    await provider.chat({ prompt: 'hi', model: 'test-model' });
+    expect('temperature' in create.mock.calls[0][0]).toBe(false);
+  });
+
+  it('sends the provider-config temperature when set', async () => {
+    const provider = new OpenAICompatibleProvider({ ...config, temperature: 1 });
+    const create = mockCreate(provider);
+    await provider.chat({ prompt: 'hi', model: 'test-model' });
+    expect(create.mock.calls[0][0].temperature).toBe(1);
+  });
+
+  it('call option temperature wins over provider config', async () => {
+    const provider = new OpenAICompatibleProvider({ ...config, temperature: 1 });
+    const create = mockCreate(provider);
+    await provider.chat({ prompt: 'hi', model: 'test-model', temperature: 0.2 });
+    expect(create.mock.calls[0][0].temperature).toBe(0.2);
+  });
+});

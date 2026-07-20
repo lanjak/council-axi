@@ -32,6 +32,7 @@ export interface ProviderConfig {
   model?: string;
   displayName: string;
   maxTokens?: number;
+  temperature?: number;
 }
 
 export type Verdict = 'agree' | 'disagree';

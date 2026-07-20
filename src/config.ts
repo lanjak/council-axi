@@ -16,6 +16,7 @@ export function loadConfig(env: Record<string, string | undefined> = process.env
     const model = env[`${prefix}_MODEL`];
     const displayName = env[`${prefix}_DISPLAY_NAME`] ?? capitalize(provider);
     const maxTokens = parsePositiveInt(env[`${prefix}_MAX_TOKENS`]);
+    const temperature = parseTemperature(env[`${prefix}_TEMPERATURE`]);
 
     providers[provider] = {
       name: provider,
@@ -24,6 +25,7 @@ export function loadConfig(env: Record<string, string | undefined> = process.env
       model,
       displayName,
       maxTokens,
+      temperature,
     };
   }
 
@@ -38,6 +40,12 @@ function parsePositiveInt(value: string | undefined): number | undefined {
   if (!value) return undefined;
   const n = Number.parseInt(value, 10);
   return Number.isInteger(n) && n > 0 ? n : undefined;
+}
+
+function parseTemperature(value: string | undefined): number | undefined {
+  if (!value) return undefined;
+  const n = Number.parseFloat(value);
+  return Number.isFinite(n) && n >= 0 ? n : undefined;
 }
 
 export function listProviders(config: CouncilConfig): string[] {

@@ -69,3 +69,17 @@ describe('config', () => {
     expect(config.providers.my_provider.displayName).toBe('My_provider');
   });
 });
+
+describe('temperature env override', () => {
+  it('parses <PREFIX>_TEMPERATURE and ignores invalid values', () => {
+    const config = loadConfig({
+      COUNCIL_PROVIDERS: 'kimi,mimo,bad',
+      KIMI_API_KEY: 'k', KIMI_BASE_URL: 'https://x/v1', KIMI_MODEL: 'k3', KIMI_TEMPERATURE: '1',
+      MIMO_API_KEY: 'k', MIMO_BASE_URL: 'https://x/v1', MIMO_MODEL: 'm',
+      BAD_API_KEY: 'k', BAD_BASE_URL: 'https://x/v1', BAD_MODEL: 'b', BAD_TEMPERATURE: 'warm',
+    });
+    expect(config.providers.kimi.temperature).toBe(1);
+    expect(config.providers.mimo.temperature).toBeUndefined();
+    expect(config.providers.bad.temperature).toBeUndefined();
+  });
+});

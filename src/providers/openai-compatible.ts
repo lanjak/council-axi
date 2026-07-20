@@ -47,10 +47,14 @@ export class OpenAICompatibleProvider extends LLMProvider {
     }
     messages.push({ role: 'user', content: options.prompt });
 
+    // Temperature is opt-in (call option or <PREFIX>_TEMPERATURE env): some
+    // endpoints reject any value but their own default (kimi k3 only accepts
+    // 1), so when nothing is configured the field is omitted entirely.
+    const temperature = options.temperature ?? this.config.temperature;
     const completion = await this.client.chat.completions.create({
       model: options.model,
       messages,
-      temperature: options.temperature ?? 0.6,
+      ...(temperature !== undefined ? { temperature } : {}),
       max_tokens: options.maxTokens ?? this.config.maxTokens ?? DEFAULT_MAX_TOKENS,
       response_format: options.jsonMode ? { type: 'json_object' } : undefined,
     });
