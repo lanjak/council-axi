@@ -2,6 +2,7 @@
 import { program, CommanderError } from 'commander';
 import { reviewCommand } from './commands/review.js';
 import { planCommand } from './commands/plan.js';
+import { debateCommand } from './commands/debate.js';
 import { setupCommand } from './commands/setup.js';
 import { homeCommand } from './commands/home.js';
 import { hookCommand } from './commands/hook.js';
@@ -43,6 +44,21 @@ program
   .option('--diff [range]', 'Attach git diff (default: HEAD)')
   .option('--stdin', 'Attach artifact content from stdin')
   .action(planCommand);
+
+const debate = program
+  .command('debate')
+  .description('Run a sequential adversarial debate until consensus or round cap');
+
+debate
+  .command('run <prompt>', { isDefault: true, hidden: true })
+  .option('-m, --models <models>', 'Comma-separated provider list')
+  .option('--max-rounds <n>', 'Maximum debate rounds (default: 5)')
+  .option('--full', 'Include the complete round-by-round transcript')
+  .option('--participate', 'Join the debate as a participant (resumable session)')
+  .option('-f, --file <path>', 'Attach a file or directory (repeatable)', collect, [])
+  .option('--diff [range]', 'Attach git diff (default: HEAD)')
+  .option('--stdin', 'Attach artifact content from stdin')
+  .action(debateCommand);
 
 program
   .command('hook [event]')
