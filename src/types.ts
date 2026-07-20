@@ -33,3 +33,40 @@ export interface ProviderConfig {
   displayName: string;
   maxTokens?: number;
 }
+
+export type Verdict = 'agree' | 'disagree';
+
+export interface DebateTurn extends JudgeResult {
+  round: number;
+  verdict?: Verdict; // parsed from trailing tag; absent if the turn errored
+}
+
+export interface DebateRound {
+  round: number;
+  turns: DebateTurn[];
+}
+
+export interface DebateOutput {
+  prompt: string;
+  mode: 'debate';
+  rounds: DebateRound[]; // always complete, regardless of --full
+  consensus: boolean;
+  totalRounds: number; // rounds actually run (a partial final round counts)
+  maxRounds: number;
+  judges: DebateTurn[]; // final turn per participant that survived round 1
+  synthesis: string;
+  availableCount: number;
+  totalCount: number;
+  warnings?: string[];
+}
+
+export interface DebateSession {
+  id: string;
+  createdAt: string; // ISO timestamp, drives 24h expiry
+  prompt: string; // artifact-expanded text
+  models: string[]; // rotation list order; includes 'caller' last
+  maxRounds: number;
+  turns: DebateTurn[]; // flat, in speaking order
+  nextTurn: { round: number; participant: string };
+  warnings?: string[];
+}
