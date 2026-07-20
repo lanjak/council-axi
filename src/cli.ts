@@ -2,7 +2,7 @@
 import { program, CommanderError } from 'commander';
 import { reviewCommand } from './commands/review.js';
 import { planCommand } from './commands/plan.js';
-import { debateCommand } from './commands/debate.js';
+import { debateCommand, debateTurnCommand, debateAbortCommand } from './commands/debate.js';
 import { setupCommand } from './commands/setup.js';
 import { homeCommand } from './commands/home.js';
 import { hookCommand } from './commands/hook.js';
@@ -59,6 +59,18 @@ debate
   .option('--diff [range]', 'Attach git diff (default: HEAD)')
   .option('--stdin', 'Attach artifact content from stdin')
   .action(debateCommand);
+
+debate
+  .command('turn <session-id> [response]')
+  .description('Submit your turn in a paused participating debate')
+  .option('--stdin', 'Read the turn from stdin')
+  .option('--full', 'Include the complete transcript in the final output')
+  .action(debateTurnCommand);
+
+debate
+  .command('abort <session-id>')
+  .description('Delete a paused debate session')
+  .action(debateAbortCommand);
 
 program
   .command('hook [event]')
